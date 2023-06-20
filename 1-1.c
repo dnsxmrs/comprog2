@@ -81,6 +81,7 @@ int main () {
     } else {
         printf("\n- Column sums are not equal.");
     }
+    printf("TESTING FOR GIT");
 
     return 0;
 }
