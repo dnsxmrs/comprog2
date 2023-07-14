@@ -204,6 +204,7 @@ int main () {
         if (dbc == 1 && srtd != 0) { // if there are a doubly linked list, the program is executed
             cconti = 'Y';
             while (cconti == 'Y' || cconti == 'y') {
+                insrtd = 0;
                 system("cls");
                 printf("=============[ INSERT A NODE ]============\n\n");
                 curr = (struct node *) malloc (sizeof(struct node));
@@ -215,10 +216,9 @@ int main () {
                         head->prev = curr;
                         curr->prev = NULL;
                         head = curr;
-                        insrtd = 1;
                         printf("\nThe number was inserted as the head node.\n");
                         getch();
-                    } else if (head->x <= curr->x && curr->x <= tail->x) { // inserted in the middle
+                    } else if (head->x < curr->x && curr->x < tail->x) { // inserted in the middle
                         ind = head;
                         ind1 = ind->next;
                         while (insrtd == 0) {
@@ -230,7 +230,7 @@ int main () {
                                 insrtd = 1;
                             }
                             ind = ind->next;
-                            ind1 = ind1->next;
+                            ind1 = ind->next;
                         }
                         printf("\nThe number was inserted somewhere in the middle.\n");
                         getch();
@@ -244,7 +244,7 @@ int main () {
                         getch();
                     }
                 } else { // descending
-                    if (curr->x > head->x) { // insert as head node
+                    if (curr->x >= head->x) { // insert as head node
                         curr->next = head;
                         head->prev = curr;
                         curr->prev = NULL;
@@ -278,7 +278,13 @@ int main () {
                         getch();
                     }
                 }
-                printf("Do you want to insert a number again(Y/N)? ");
+                printf("\n\n");
+                curr = head;
+                while (curr != NULL) {
+                    printf(" [ %d ] ", curr->x);
+                    curr = curr->next;
+                }
+                printf("\n\nDo you want to insert a number again(Y/N)? ");
                 scanf(" %c", &cconti);
             } 
         } else if (dbc == 1 && srtd == 0) { // sort the doubly first
