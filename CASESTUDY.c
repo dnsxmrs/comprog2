@@ -7,7 +7,6 @@
 
 struct Employee {
     char number[11];
-    char name[16];
     char firstName[15];
     char lastName[15];
     char status;
@@ -17,7 +16,6 @@ struct Employee {
     float overtimePay;
     float netPay;
 };
-
 struct Node {
     struct Node *prev;
     int x;
@@ -40,7 +38,7 @@ int searchNode(struct Node *curr);
 
 int main() {  // main menu (compilation of 1 and 2 case study problems)
     int mainc;
-    while(mainc != 4) {
+    while(mainc != 4){
         system("CLS");
         printf(" ######## ###   ### ########    #####    #######   ######## ########   ####### \n");
         printf("######### #### #### ###   ###  ### ###  ######### ######### ###   ### #########\n");
@@ -106,40 +104,48 @@ void members() {
 }
 
 void caseNumber1() {
-	int i;
-    FILE *fp;
+	int i, n;
     struct Employee employees[100];
-    int n, gennum = 2023, genid = 17000;
+    FILE *fp;
     fp = fopen("pixelsyspayroll.txt", "w");
-    if(fp == NULL){  // Check if file can be created
+    if(fp == NULL) {  // Check if file can be created
         printf("File cannot be created!");
         getch();
     } else {
         system("CLS");
-        printf("Enter the number of employees: ");
+        printf("========================================================\n");
+        printf("===================[ PIXELSYS PAYROLL ]=================\n");
+        printf("========================================================\n");
+        printf("|                                                      |\n");
+        printf("| Enter the number of employee/s: ");
         scanf("%d", &n);
         for(i = 0; i < n; i++) {
-            printf("\nEmployee #%d\n", i + 1);
-            printf("Employee Number: ");
+            system("CLS");
+            printf("========================================================\n");
+            printf("===================[ PIXELSYS PAYROLL ]=================\n");
+            printf("========================================================\n");
+            printf("|                                                      |\n");
+            printf("=====================[ EMPLOYEE #%d ]====================\n", i + 1);
+            printf("|                                                      |\n");
+            printf("| Employee Number: ");
             scanf(" %s", &employees[i].number);
             fflush(stdin);
-            printf("Employee First Name: ");
+            printf("| Employee First Name: ");
             gets(employees[i].firstName);
-            printf("Employee Last Name: ");
+            printf("| Employee Last Name: ");
             gets(employees[i].lastName);
-            printf("Status Code (R for Regular, C for Casual): ");
+            printf("| Status Code (R for Regular, C for Casual): ");
             scanf(" %c", &employees[i].status);
-            printf("Hours Worked: ");
+            printf("| Hours Worked: ");
             scanf("%d", &employees[i].hoursWorked);
-            printf("Deductions: ");
+            printf("| Employee Deductions: ");
             scanf("%f", &employees[i].deductions);
             if (employees[i].status == 'R' || employees[i].status == 'r') {
-                printf("Basic Salary: ");
+                printf("| Employee Basic Salary: ");
                 scanf("%f", &employees[i].basicSalary);
             } else if (employees[i].status == 'C' || employees[i].status == 'c') {
-                printf("Basic Rate: ");
+                printf("| Employee Basic Rate: ");
                 scanf("%f", &employees[i].basicSalary);
-                employees[i].basicSalary *= employees[i].hoursWorked;
             }   
             calculateNetPay(&employees[i]);
             fprintf(fp,"%s %s %s %c %5.2f %5.2f %5.2f %5.2f\n", employees[i].number, employees[i].firstName, employees[i].lastName, employees[i].status, employees[i].basicSalary, employees[i].overtimePay, employees[i].deductions, employees[i].netPay);
@@ -154,40 +160,46 @@ void caseNumber1() {
         printf("File cannot be opened for reading!");
         exit(1);
     } else {
-        printf("                                  PIXELSYS                                 \n");
-        printf("                                 Tagiug City                               \n\n");
-        printf("                                  Payroll                                  \n\n");
-        printf("    Employee           Employee          Status    Basic       Overtime  Deductions       Net  \n");
-        printf("     Number              Name                     Salary          Pay                     Pay  \n");
-        for(i = 0; i < n; i++) { // get data from file
+
+        printf("===============================================================================================\n");
+        printf("                                           PIXELSYS\n");
+        printf("                                         Tagiug City\n");
+        printf("     -------------------------------------------------------------------------------------\n");
+        printf("                                           Payroll\n\n");
+        printf("    Employee           Employee          Status       Basic    Overtime  Deductions     Net\n");
+        printf("     Number              Name                        Salary       Pay                   Pay\n");
+        for(i = 0; i < n; i++) { // get data from file and print data
             fscanf(fp, "%s %s %s %c %f %f %f %f\n", &employees[i].number, &employees[i].firstName, employees[i].lastName, &employees[i].status, &employees[i].basicSalary, &employees[i].overtimePay, &employees[i].deductions, &employees[i].netPay); // reading/getting the records from the file// print data on display
-            printf("%10s\t%10s %2s\t%7s\t%5.2f\t%7.2f\t%8.2f\t%5.2f\n", employees[i].number, employees[i].firstName, employees[i].lastName,
+            printf("%13s%13s %-10s%10s%12.2f%12.2f%12.2f%10.2f\n", employees[i].number, employees[i].firstName, employees[i].lastName,
                 (employees[i].status == 'R'  ||  employees[i].status == 'r' ? "Regular" : "Casual"),
                 employees[i].basicSalary, employees[i].overtimePay,
                 employees[i].deductions, employees[i].netPay);
         }
+        printf("===============================================================================================\n");
         printf("Press any key to continue...");
         fclose(fp);
         getch();
     }
-    
 }
 
 void calculateNetPay(struct Employee* emp) {
     if (emp->status == 'R' || emp->status == 'r') {
         float basicRate = emp->basicSalary / 160.0;
+        emp->overtimePay = 0.0;
         if (emp->hoursWorked > 160) {
             float overtimeRate = basicRate * 1.5;
             emp->overtimePay = (emp->hoursWorked - 160) * overtimeRate;
-        } else {
-            emp->overtimePay = 0.0;
         }
         emp->netPay = emp->basicSalary + emp->overtimePay - emp->deductions;
     } else if (emp->status == 'C' || emp->status == 'c') {
+        float basicRate = emp->basicSalary;
         emp->overtimePay = 0.0;
         if (emp->hoursWorked > 160) {
-            float overtimeRate = emp->basicSalary / 160.0 * 1.5;
+            emp->basicSalary = 160 * basicRate;
+            float overtimeRate = basicRate * 1.5;
             emp->overtimePay = (emp->hoursWorked - 160) * overtimeRate;
+        } else {
+            emp->basicSalary = emp->hoursWorked * basicRate;
         }
         emp->netPay = emp->basicSalary + emp->overtimePay - emp->deductions;
     }
